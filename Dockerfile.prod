@@ -1,0 +1,15 @@
+FROM golang:1.22.0-bookworm AS builder
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+FROM scratch
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app/main .
+
+CMD [ "./main"]
